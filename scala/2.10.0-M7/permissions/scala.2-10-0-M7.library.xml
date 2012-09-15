@@ -1,0 +1,4 @@
+<permissions>
+  <library name="scala.2-10-0-M7.library"
+    file="/data/framework/scala/2.10.0-M7/scala-library.jar"/>
+</permissions>

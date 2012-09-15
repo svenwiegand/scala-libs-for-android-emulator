@@ -1,0 +1,4 @@
+<permissions>
+  <library name="scala.2-9-2.mutable"
+    file="/data/framework/scala/2.9.2/scala-mutable.jar"/>
+</permissions>

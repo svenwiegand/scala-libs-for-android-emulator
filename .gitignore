@@ -1,13 +1,5 @@
-*.class
-*.log
-
-# sbt specific
+# IntelliJ specific
+.idea/workspace.xml
+atlassian-ide-plugin.xml
 dist/*
-target/
-lib_managed/
-src_managed/
-project/boot/
-project/plugins/project/
-
-# Scala-IDE specific
-.scala_dependencies
+out
