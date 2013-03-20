@@ -73,16 +73,16 @@ Currently the script supports the following scala versions:
 * 2.10.0-M7
 
 It is quite easy to support additional versions:
-1. Copy your `scala-library.jar` and split it up into several smaller jars based on a package level, so that they can
+* Copy your `scala-library.jar` and split it up into several smaller jars based on a package level, so that they can
  be processed using the `dx` tool.
-2. Use the `dx` tool to convert each of the resulting JVM-JARs into Dalvik-JARs as followed:
+* Use the `dx` tool to convert each of the resulting JVM-JARs into Dalvik-JARs as followed:
 ```batch
 dx -JXmx1024M -JXms1024M -JXss4M --no-optimize --debug --dex
     --output=\tmp\scala\android\scala-library.jar \tmp\scala\jvm\scala-library.jar
 ```
-2. Clone an existing version directory inside the `scala` folder
-3. Replace the JARs with your newly generated ones
-4. Adjust the permission files for the version accordingly
+* Clone an existing version directory inside the `scala` folder
+* Replace the JARs with your newly generated ones
+* Adjust the permission files for the version accordingly
 
 That's it. **And please don't forget to provide me the new version, so that I can include it into the distribution here
 at GitHub**
