@@ -1,4 +1,4 @@
 <permissions>
   <library name="scala.2-9-2.collection"
-    file="/data/framework/scala/2.9.2/scala-collection.jar"/>
+    file="/system/framework/scala/2.9.2/scala-collection.jar"/>
 </permissions>

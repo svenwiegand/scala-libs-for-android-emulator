@@ -1,4 +1,0 @@
-<permissions>
-  <library name="scala.2-10-0-M7.actors-migration"
-    file="/data/framework/scala/2.10.0-M7/scala-actors-migration.jar"/>
-</permissions>

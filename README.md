@@ -31,8 +31,8 @@ preinstalls the scala libs on a rooted android device and uses another idea: Ins
 it installs the scala libs as system libraries which can then be used by your app using `<uses-library />` statements
 in the `AndroidManifest.xml`. I've tried this on the emulator and voila: It was working.
 
-To easily path an emulator I then simply created this scala script which does everything for us -- from starting up
-the emulator to installing the libraries, creating a new system image and putting it into the right AVD directory.
+To easily patch an emulator I then simply created this scala script which does everything for us -- from starting up
+the emulator to installing the libraries, adjusting the system image and putting it into the right AVD directory.
 All you need to do is to start the script and afterwards restart the emulator (cannot be automated on Windows).
 
 If you are intersted in the details, of how this works, simply take a look into the scala script...

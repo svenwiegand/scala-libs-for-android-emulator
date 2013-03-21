@@ -1,4 +1,7 @@
-import java.io.File
+import java.io.{FileReader, File}
+import java.nio.file.Files
+import scala.language.implicitConversions
+import scala.io.Source
 import sys.process.Process
 
 /**
@@ -51,6 +54,7 @@ private object Device {
 private class Installer(
   private val device: Device,
   private val scalaVersion: String) {
+  private val systemImage = new File(device.dir, "system.img")
 
   /**
    * Indicates a failed command line execution (e.g. the process returned an exit code != 0).
@@ -60,18 +64,20 @@ private class Installer(
   private class ExecutionFailedException(val command: String, val exitCode: Int)
     extends Exception("Command '" + command + "' failed with exit code " + exitCode)
 
+  implicit def file2Path(file: File) = file.toPath
+
   /**
    * Performs the installation.
    */
   def install() {
     println("Installing Scala " + scalaVersion + " for " + device.name + " (" + device.platform + ")")
-    val emulatorProcess = startEmulator()
+
+    prepareSystemImage()
+    val emulatorProcess = startEmulator(systemImage)
     waitForEmulator()
     makeSystemPartitionWritable()
     pushScalaLibrary()
     pushPermissions()
-    createSystemImage()
-    copySystemImage()
     done()
     emulatorProcess.destroy()
   }
@@ -80,8 +86,30 @@ private class Installer(
   // install
   //
 
-  private def startEmulator() = {
-    val command = "emulator -avd " + device.name + " -partition-size 1024 -no-boot-anim -no-snapshot"
+  private def getSystemImageSource: File = {
+    val avdConfigFile = new File(device.dir, "hardware-qemu.ini")
+    val avdConfig = Source.fromFile(avdConfigFile)
+    val kernelPath = avdConfig.getLines() find { _.startsWith("kernel.path") } match {
+      case None => throw new IllegalArgumentException("Haven't found kernel.path in " + avdConfigFile.getPath)
+      case Some(pathDef) => new File(pathDef.split('=')(1).trim)
+    }
+    new File(kernelPath.getParentFile, "system.img")
+  }
+
+  private def prepareSystemImage() {
+    val systemImage = new File(device.dir, "system.img")
+    if (!systemImage.exists) {
+      printProgressHint("copying system image from " + getSystemImageSource.getPath + " to " + systemImage.getPath)
+      Files.copy(getSystemImageSource, systemImage)
+    } else {
+      printProgressHint("using existing image file at " + systemImage.getPath)
+    }
+  }
+
+  private def startEmulator(systemImage: File) = {
+    val targetImageSize = systemImage.length + 10 * 1024 * 1024 // assume about 10MB for the scala stuff
+    val command = "emulator -avd " + device.name + " -partition-size 1024 -no-boot-anim -no-snapshot " +
+        "-qemu -nand system,size=0x" + targetImageSize.toHexString + ",file=" + systemImage.getAbsolutePath
     printProgressHint("starting emulator ...")
     printCommand(command)
     Process(command).run()
@@ -96,7 +124,7 @@ private class Installer(
   }
 
   private def pushScalaLibrary() {
-    val targetDir = "/data/framework/scala/" + scalaVersion + "/"
+    val targetDir = "/system/framework/scala/" + scalaVersion + "/"
     adbShell("rm -r " + targetDir, "removing existing Scala library")
     adbShell("mkdir -p " + targetDir, "creating Scala library directory")
 
@@ -110,25 +138,6 @@ private class Installer(
     val targetDir = "/system/etc/permissions/"
     printProgressHint("creating permission files")
     permissionFiles.foreach(pushFile(_, targetDir))
-  }
-
-  private def createSystemImage() {
-    printProgressHint("creating system image")
-
-    val yaff = "/data/yaff"
-    pushFile(new File("tools/mkfs.yaffs2." + device.platform), yaff)
-    adbShell("chmod 777 " + yaff)
-    adbShell(yaff + " /system /data/system.img")
-    adbShell("ls -l /data/system.img")
-
-    printProgressHint("downloading system image from emulator. This will take *several* minutes ...")
-    pullFile("/data/system.img")
-    adbShell("rm /data/system.img")
-  }
-
-  private def copySystemImage() {
-    execute("cmd /c copy system.img " + device.dir + """\""", "copying system image to AVD directory")
-    execute("cmd /c del system.img")
   }
 
   private def done() {
@@ -193,16 +202,13 @@ private class Installer(
    * @throws ExecutionFailedException if adb's return code is != 0
    */
   private def pushFile(srcFile: File, target: String) {
+    val systemImageSize = systemImage.length
     adb("push \"" + srcFile.getAbsolutePath + "\" " + target)
-  }
 
-  /**
-   * Pulls the specified file from the emulator. The file is placed into the current working directory.
-   * @param path the path of the file in the emulator's file system
-   * @throws ExecutionFailedException if adb's return code is != 0
-   */
-  private def pullFile(path: String) {
-    adb("pull \"" + path + "\"")
+    // wait until the change is written back to the system image file
+    while (systemImage.length() == systemImageSize) {
+      Thread.sleep(1000)
+    }
   }
 
   /**
