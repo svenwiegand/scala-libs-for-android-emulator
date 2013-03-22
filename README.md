@@ -56,9 +56,9 @@ times when developing with scala for android.
 
 <avd>            the name of the android virtual device to install the libs on
                  possible values:
-                 2.3.3_HVGA, 4.0.3_HVGA, 4.1_HVGA
+                 4.0.3_HVGA, 4.1_HVGA, 4.2_Galaxy-Nexus
 <scala-version>  the scala version to install. possible values:
-                 2.10.0-M7, 2.9.2
+                 2.10.1, 2.9.2
 ```
 
 * Call the script with the adequate parameters and wait until it's done (what may take a few minutes)
@@ -70,7 +70,7 @@ times when developing with scala for android.
 
 Currently the script supports the following scala versions:
 * 2.9.2
-* 2.10.0-M7
+* 2.10.1
 
 It is quite easy to support additional versions:
 * Copy your `scala-library.jar` and split it up into several smaller jars based on a package level, so that they can
