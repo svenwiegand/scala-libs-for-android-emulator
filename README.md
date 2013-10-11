@@ -1,6 +1,6 @@
 # Overview
 
-scala-libs-for-android-emulator provides you an easy way to preinstall the scala libraries on your android emulator, so
+scala-libs-for-android-emulator provides you an easy way to preinstall the scala libraries on your android emulator (from the SDK or genymotion), so
 to speed up your development as you do not need to include the scala libs into your debug builds then. I've tested this
 also on current emulator images (ICS and Jelly Bean, either ARM or x86 with hardware accelerated emulation).
 
@@ -43,7 +43,7 @@ Using the script is easy:
 * Download the whole directory tree of this project to your system (either by cloning the repository or downloading it a ZIP)
 * Ensure that your `PATH` contains the scala compiler and the android tools
 * call the script without any parameters to get usage help and a list of available scala versions and AVDs:
-```batch
+```
 scala install.scala
 ```
 
@@ -65,6 +65,9 @@ times when developing with scala for android.
 * Add the `<uses-library />` statements outputed at the end of the script run to your `AndroidManifest.xml`
 * Enjoy developing android with scala!
 
+## Support for Genymotion emulator
+
+Genymotion is a great alternative to the standard emulator, as it is very fast and the images include Google play and all it's services. There is a dedicated script for installing scala into the currently running genymotion device: ```scala install-genymotion.scala```. The script requires that there is exactly one genymotion emulator currently running and that you configured genymotion for ADB usage. Call it without further paramters to retrieve usage help -- this script only requires you to specify the requested scala version.
 
 # Supported Scala Versions
 
