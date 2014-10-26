@@ -18,7 +18,7 @@ private object TargetPlatform extends Enumeration {
  * @param platform the platform of the device
  */
 private sealed case class Device(name: String, platform: TargetPlatform.Platform) {
-  lazy val dir = System.getProperty("user.home") + """\.android\avd\""" + name + """.avd"""
+  lazy val dir = System.getProperty("user.home") + """/.android/avd/""" + name + """.avd"""
 }
 
 /**
@@ -107,7 +107,7 @@ private class Installer(
   }
 
   private def startEmulator(systemImage: File) = {
-    val targetImageSize = systemImage.length + 50 * 1024 * 1024 // assume about 10MB for the scala stuff
+    val targetImageSize = systemImage.length + 50 * 1024 * 1024 // assume about 50MB for the scala stuff
     val command = "emulator -avd " + device.name + " -partition-size 1024 -no-boot-anim -no-snapshot " +
         "-qemu -nand system,size=0x" + targetImageSize.toHexString + ",file=" + systemImage.getAbsolutePath
     printProgressHint("starting emulator ...")
@@ -246,6 +246,7 @@ private object Installer {
                                           )
     extends Exception(name + ": invalid value '" + value + "'. Possible values are: " + makePossibleValuesString(possibleValues))
 
+  private lazy val isWindows = System.getProperties.get("os.name").toString.toLowerCase.contains("windows")
   private lazy val availableScalaVersions = new File("scala").list().toSet
   private lazy val availableDevicesByName = getAvailableDevicesByName
   private lazy val availableDeviceNames = availableDevicesByName.keySet
@@ -286,9 +287,14 @@ private object Installer {
    * @return available `Device`s mapped by their names
    */
   private def getAvailableDevicesByName = {
-    val lines = Process("cmd /c android list avd").lines.seq.mkString("\n")
+    val lines = shellCommand("android list avd").lines.seq.mkString("\n")
     val specs = lines.split("---------")
     specs.map(Device(_)).map{device => (device.name, device)}.toMap
+  }
+
+  private def shellCommand(cmd: String) = {
+    val fullCommand = if (isWindows) s"cmd /c $cmd" else cmd
+    Process(fullCommand)
   }
 
   /**
