@@ -27,7 +27,7 @@ private sealed case class Device(name: String, platform: TargetPlatform.Platform
 private object Device {
   private val SpecPattern = """(?s).*Name: (\S+).*ABI: (\S+).*""".r
   private val Arm = """arm.*""".r
-  private val X86 = "x86"
+  private val X86 = ".*x86".r
 
   /**
    * Creates a `Device`.
@@ -39,7 +39,7 @@ private object Device {
     spec match {
       case SpecPattern(name, platform) => new Device(name, platform match {
         case Arm() => TargetPlatform.arm
-        case X86 => TargetPlatform.x86
+        case X86() => TargetPlatform.x86
         case abi => throw new IllegalArgumentException("Unknown target platform '" + abi + "' for device '" + name + "'")
       })
     }
@@ -107,7 +107,7 @@ private class Installer(
   }
 
   private def startEmulator(systemImage: File) = {
-    val targetImageSize = systemImage.length + 30 * 1024 * 1024 // assume about 10MB for the scala stuff
+    val targetImageSize = systemImage.length + 50 * 1024 * 1024 // assume about 10MB for the scala stuff
     val command = "emulator -avd " + device.name + " -partition-size 1024 -no-boot-anim -no-snapshot " +
         "-qemu -nand system,size=0x" + targetImageSize.toHexString + ",file=" + systemImage.getAbsolutePath
     printProgressHint("starting emulator ...")
