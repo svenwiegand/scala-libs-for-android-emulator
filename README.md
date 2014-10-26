@@ -4,8 +4,7 @@ scala-libs-for-android-emulator provides you an easy way to preinstall the scala
 to speed up your development as you do not need to include the scala libs into your debug builds then. I've tested this
 also on current emulator images (ICS and Jelly Bean, either ARM or x86 with hardware accelerated emulation).
 
-**Disclaimer:** The script will currently only run on Windows development systems, but as it is written in scala it
-should be easy to adjust the few Windows specific code lines. If someone has solved this, just let me know.
+**Disclaimer:** I've only tested the script on Windows, but it should also run on Mac OS X and other Unix-platforms.
 
 ## The Problem
 
