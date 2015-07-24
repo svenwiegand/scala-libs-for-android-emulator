@@ -1,0 +1,4 @@
+<permissions>
+  <library name="scala.2-11-7.config"
+    file="/system/framework/scala/2.11.7/config-1.2.1.jar"/>
+</permissions>

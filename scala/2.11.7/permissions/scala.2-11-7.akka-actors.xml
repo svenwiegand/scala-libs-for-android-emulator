@@ -1,0 +1,4 @@
+<permissions>
+  <library name="scala.2-11-7.akka-actors"
+    file="/system/framework/scala/2.11.7/akka-actor_2.11-2.3.10.jar"/>
+</permissions>

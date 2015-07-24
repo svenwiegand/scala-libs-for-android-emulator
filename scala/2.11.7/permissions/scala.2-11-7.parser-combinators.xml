@@ -1,0 +1,4 @@
+<permissions>
+  <library name="scala.2-11-7.parser-combinators"
+    file="/system/framework/scala/2.11.7/scala-parser-combinators_2.11-1.0.4.jar"/>
+</permissions>
