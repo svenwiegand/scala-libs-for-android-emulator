@@ -108,8 +108,8 @@ private class Installer(
 
   private def startEmulator(systemImage: File) = {
     val targetImageSize = systemImage.length + 50 * 1024 * 1024 // assume about 50MB for the scala stuff
-    val command = "emulator -avd " + device.name + " -partition-size 1024 -no-boot-anim -no-snapshot " +
-        "-qemu -nand system,size=0x" + targetImageSize.toHexString + ",file=" + systemImage.getAbsolutePath
+    val command = "emulator -avd " + device.name + " -partition-size 1024 -no-snapshot " +
+        "-qemu -nand system,size=0x" + targetImageSize.toHexString + ",file=" + systemImage.getAbsolutePath + ",pagesize=512,extrasize=0"
     printProgressHint("starting emulator ...")
     printCommand(command)
     Process(command).run()
@@ -205,10 +205,15 @@ private class Installer(
     val systemImageSize = systemImage.length
     adb("push \"" + srcFile.getAbsolutePath + "\" " + target)
 
+	// FIXME: system.img from recent Android distributions does not change its length as result of the above push
+	// (presumably because it is padded to a bigger size than its content), so this condition results in endless loop
+	/*
     // wait until the change is written back to the system image file
     while (systemImage.length() == systemImageSize) {
       Thread.sleep(1000)
-    }
+    }*/
+    Thread.sleep(5000)
+
   }
 
   /**
