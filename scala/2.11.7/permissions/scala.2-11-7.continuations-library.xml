@@ -1,0 +1,4 @@
+<permissions>
+  <library name="scala.2-11-7.continuations-library"
+    file="/system/framework/scala/2.11.7/scala-continuations-library_2.11-1.0.2.jar"/>
+</permissions>

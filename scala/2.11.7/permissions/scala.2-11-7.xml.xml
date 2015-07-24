@@ -1,0 +1,4 @@
+<permissions>
+  <library name="scala.2-11-7.xml"
+    file="/system/framework/scala/2.11.7/scala-xml_2.11-1.0.4"/>
+</permissions>

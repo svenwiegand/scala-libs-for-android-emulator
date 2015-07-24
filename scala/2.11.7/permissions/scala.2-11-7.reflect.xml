@@ -1,0 +1,4 @@
+<permissions>
+  <library name="scala.2-11-7.reflect"
+    file="/system/framework/scala/2.11.7/scala-reflect.jar"/>
+</permissions>

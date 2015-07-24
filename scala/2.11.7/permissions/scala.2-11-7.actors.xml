@@ -1,0 +1,4 @@
+<permissions>
+  <library name="scala.2-11-7.actors"
+    file="/system/framework/scala/2.11.7/scala-actors-2.11.0.jar"/>
+</permissions>
